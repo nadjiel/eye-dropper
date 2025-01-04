@@ -17,6 +17,8 @@ uniform uint palette_array_size = uint(0);
  * The [code]input_palette_texture[/code] property should store a texture with a color palette.
  * This palette should be organized as a grid of pixels (transparent colors count), each one storing a color.
  * If found in the original texture, the color of each pixel of this palette is replaced by the color of same position in the [code]output_palette_texture[/code].
+ * If this palette texture is set, but the [code]output_palette_texture[/code] is not, the shader will try to replace the target colors with that empty texture, which should be avoided.
+ * If you wish to let this property set to a palette without affecting the end result, just set the [code]output_palette_texture[/code] to the same palette.
  */
 uniform sampler2D input_palette_texture: filter_nearest;
 

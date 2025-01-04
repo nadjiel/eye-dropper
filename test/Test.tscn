@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgwv1mfxwt8rn"]
+
+[ext_resource type="Shader" path="res://addons/eye_dropper/eye_dropper.gdshader" id="1_8fya1"]
+[ext_resource type="Texture2D" uid="uid://djhfbpbl76xa4" path="res://test/sprite.png" id="2_hm8ms"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rqaip"]
+shader = ExtResource("1_8fya1")
+shader_parameter/palette_array_size = 0
+shader_parameter/input_palette_array = PackedColorArray()
+shader_parameter/output_palette_array = PackedColorArray()
+
+[node name="Test" type="Node2D"]
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_rqaip")
+position = Vector2(557, 320)
+texture = ExtResource("2_hm8ms")
