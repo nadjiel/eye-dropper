@@ -1,45 +1,51 @@
 shader_type canvas_item;
 
 /**
- * The [code]palette_array_size[/code] constant specifies how much colors the [code]input_palette_array[/code] and [code]output_palette_array[/code] properties should store.
+ * The [code]max_palette_array_size[/code] constant specifies how much colors the [code]input_palette_array[/code] and [code]output_palette_array[/code] properties should store at maximum.
  * Since the size of arrays in shaders must be constant, this can't be exported to be edited in the editor, so it is expected that you hardcode this manually to attend your needs.
  */
-const uint palette_array_size = uint(4);
+const uint max_palette_array_size = uint(4);
 
 /**
- * The [code]palette_size[/code] property must specify how much colors the [code]input_palette_texture[/code] and [code]output_palette_texture[/code] properties store.
+ * The [code]palette_array_size[/code] property stores how much colors there actually are in the palette arrays.
+ * Letting this property as [code]0[/code] will make it so the palette arrays aren't used at all, which is useful so that when there aren't any colors defined there, transparent colors aren't replaced.
+ * This property should be kept between [code]0[/code] and [code]max_palette_array_size[/code], but to avoid errors it is always clamped when used.
  */
-uniform uint palette_size = 0;
+uniform uint palette_array_size = uint(0);
 
 /**
  * The [code]input_palette_texture[/code] property should store a texture with a color palette.
- * This palette should be organized as a row of pixels, each one storing a color.
- * The amount of pixels this texture is supposed to have is the number that you inform in the [code]palette_size[/code] property.
- * If found in the original texture, the color of each pixel of this palette is replaced in that texture by the color of same position in the [code]output_palette_texture[/code].
+ * This palette should be organized as a grid of pixels (transparent colors count), each one storing a color.
+ * If found in the original texture, the color of each pixel of this palette is replaced by the color of same position in the [code]output_palette_texture[/code].
  */
-uniform sampler2D input_palette_texture;
+uniform sampler2D input_palette_texture: filter_nearest;
 
 /**
  * The [code]output_palette_texture[/code] property should store a texture with a color palette.
- * This palette should be organized as a row of pixels, each one storing a color.
- * The amount of pixels this texture is supposed to have is the number that you inform in the [code]palette_size[/code] property.
+ * This palette should be organized as a grid of pixels (transparent colors count), each one storing a color.
+ * For proper functioning, this texture should have the same size as the [code]input_palette_texture[/code].
  * The color of each pixel of this palette is used to replace the color of same position in the [code]input_palette_texture[/code], if found in the original texture.
  */
-uniform sampler2D output_palette_texture;
+uniform sampler2D output_palette_texture: filter_nearest;
 
 /**
- * The [code]input_palette_array[/code] property stores an array with the colors that should be replaced by others, if found in the base texture.
+ * The [code]input_palette_array[/code] property stores an array with the colors that should be replaced by other colors, if found in the base texture.
+ * This array is only used if the [code]palette_array_size[/code] property is greater than [code]0[code].
  * The colors that will replace the ones specified here are the colors stored in the [code]output_palette_array[/code] property.
  * What color will replace what color is determined by the index of such colors: the colors in the same index in both arrays are the ones that will be switched.
+ * If there's a color in this array that doesn't have a pair in the [code]output_palette_array[/code], such color is replaced by full transparency.
+ * Also, any empty values in this array are considered as fully transparent colors.
  */
-uniform vec4 input_palette_array[palette_array_size]: source_color;
+uniform vec4 input_palette_array[max_palette_array_size]: source_color;
 
 /**
- * The [code]output_palette_array[/code] property stores an array with the colors that will replace the others, if found in the base texture.
+ * The [code]output_palette_array[/code] property stores an array with the colors that will replace the other mapped colors found in the base texture.
+ * This array is only used if the [code]palette_array_size[/code] property is greater than [code]0[code].
  * The colors that will be replaced by the ones specified here are the colors stored in the [code]input_palette_array[/code] property.
  * What color will replace what color is determined by the index of such colors: the colors in the same index in both arrays are the ones that will be switched.
+ * Also, any empty values in this array are considered as fully transparent colors.
  */
-uniform vec4 output_palette_array[palette_array_size]: source_color;
+uniform vec4 output_palette_array[max_palette_array_size]: source_color;
 
 /**
  * The [code]compare_floats[/code] function receives two [code]float[/code]
@@ -63,37 +69,60 @@ int compare_floats(float a, float b) {
 }
 
 /**
- * The [code]find_color_in_palette_texture[/code] function tries to find a
- * [param color] in a [param palette] texture with size [param size].
- * To do so, this function iterates over the palette trying to find a
- * color that matches the desired one.
- * If such color is not found, this function returns [code]-1.0[/code] as its
- * result. If the color is found, the coordinate of this color in the texture
- * (from [code]0.0[/code] to [code]1.0[/code]) is returned.
+ * The [code]color_is_transparent[/code] function is a utility function that
+ * returns a [code]bool[/code] indicating if the received [param color] is
+ * fully transparent.
  */
-float find_color_in_palette_texture(vec4 color, sampler2D palette, uint size) {
-	for(float i = 0.5; i < float(size); i += 1.0) {
-		float palette_coord = i / float(size);
-		
-		vec4 palette_color = texture(palette, vec2(palette_coord, 0.5));
-		
-		if(color.rgb == palette_color.rgb) {
-			return palette_coord;
+bool color_is_transparent(vec4 color) {
+	return compare_floats(color.a, 0.0) == 0;
+}
+
+/**
+ * The [code]find_color_in_palette_texture[/code] function tries to find a
+ * [param color] in a [param palette] texture.
+ * To do so, this function iterates over the palette trying to find a
+ * color that matches the desired one (fully transparent colors are considered
+ * equal, and when comparing other colors the opacity is taken into account).
+ * If such color is not found, this function returns a [code]vec2(-1.0)[/code]
+ * as its result. If the color is found, the coordinate of this color in the
+ * texture (from [code]vec2(0.0)[/code] to [code]vec2(1.0)[/code]) is returned.
+ */
+vec2 find_color_in_palette_texture(vec4 color, sampler2D palette) {
+	ivec2 palette_size = textureSize(palette, 0);
+	
+	for(uint y = uint(0); y < uint(palette_size.y); y++) {
+		for(uint x = uint(0); x < uint(palette_size.x); x++) {
+			vec2 palette_coord = vec2(
+				float(x) / float(palette_size.x),
+				float(y) / float(palette_size.y)
+			);
+			
+			vec4 palette_color = texture(palette, palette_coord);
+			
+			if(color == palette_color) {
+				return palette_coord;
+			}
+			if(
+				color_is_transparent(color) &&
+				color_is_transparent(palette_color)
+			) {
+				return palette_coord;
+			}
 		}
 	}
 	
-	return -1.0;
+	return vec2(-1.0);
 }
 
 /**
  * The [code]get_color_from_palette_texture[/code] function returns what color
  * is in the given [param coord] in the given [param palette].
- * The [param coord] should be between [code]0.0[/code] and [code]1.0[/code]
- * so that the [code]texture[/code] function can be used with it as the x axis
- * of the palette texture to look for.
+ * The [param coord] should be between [code]vec2(0.0)[/code] to
+ * [code]vec2(1.0)[/code] so that the [code]texture[/code]
+ * function can be used with it as the coordinates to look for.
  */
-vec4 get_color_from_palette_texture(float coord, sampler2D palette) {
-	return texture(palette, vec2(coord, 0.5));
+vec4 get_color_from_palette_texture(vec2 coord, sampler2D palette) {
+	return texture(palette, coord);
 }
 
 /**
@@ -108,35 +137,48 @@ void swap_colors_from_palette_textures(
 	vec4 input_color,
 	inout vec4 output_color
 ) {
-	float palette_coord = find_color_in_palette_texture(
-		input_color, input_palette_texture, palette_size
+	vec2 palette_coord = find_color_in_palette_texture(
+		input_color, input_palette_texture
 	);
 	
-	if(compare_floats(palette_coord, -1.0) == 0) {
+	if(palette_coord == vec2(-1.0)) {
 		return;
 	}
 	
-	output_color.rgb = get_color_from_palette_texture(
+	output_color = get_color_from_palette_texture(
 		palette_coord,
 		output_palette_texture
-	).rgb;
+	);
 }
 
 /**
  * The [code]find_color_in_palette_array[/code] function tries to find a
  * [param color] in a [param palette] array with size
- * [code]palette_array_size[/code].
- * To do so, this function iterates over the palette trying to find a
- * color that matches the desired one.
+ * [code]max_palette_array_size[/code].
+ * Such search is only made between the [code]0[/code] and
+ * [code]palette_array_size[/code] indexes, so that undefined colors aren't
+ * considered.
+ * To find the desired color, this function iterates over the palette trying to find a
+ * color that matches the desired one (fully transparent colors are considered
+ * equal, and when comparing other colors the opacity is taken into account).
  * If such color is not found, this function returns [code]-1[/code] as its
  * result. If the color is found, the coordinate of this color in the texture
- * (from [code]0[/code] to [code]palette_array_size - 1[/code]) is returned.
+ * (from [code]0[/code] to [code]max_palette_array_size - 1[/code]) is returned.
  */
-int find_color_in_palette_array(vec4 color, vec4[palette_array_size] palette) {
-	for(int i = 0; i < palette.length(); i++) {
+int find_color_in_palette_array(vec4 color, vec4[max_palette_array_size] palette) {
+	int safe_palette_array_size = int(clamp(
+		palette_array_size,
+		0,
+		max_palette_array_size
+	));
+	
+	for(int i = 0; i < safe_palette_array_size; i++) {
 		vec4 palette_color = palette[i];
 		
-		if(color.rgb == palette_color.rgb) {
+		if(color == palette_color) {
+			return i;
+		}
+		if(color_is_transparent(color) && color_is_transparent(palette_color)) {
 			return i;
 		}
 	}
@@ -148,12 +190,12 @@ int find_color_in_palette_array(vec4 color, vec4[palette_array_size] palette) {
  * The [code]get_color_from_palette_array[/code] function returns what color
  * is in the given [param coord] in the given [param palette].
  * The [param coord] should be between [code]0[/code] and
- * [code]palette_array_size - 1[/code] so that the color can be got without
- * an out of bounds access to the [code]palette[/code] array.
+ * [code]max_palette_array_size - 1[/code] so that the color can be got without
+ * an out of bounds access to the palette array.
  */
 vec4 get_color_from_palette_array(
 	uint coord,
-	vec4[palette_array_size] palette
+	vec4[max_palette_array_size] palette
 ) {
 	return palette[coord];
 }
@@ -179,10 +221,10 @@ void swap_colors_from_palette_arrays(
 		return;
 	}
 	
-	output_color.rgb = get_color_from_palette_array(
+	output_color = get_color_from_palette_array(
 		uint(palette_coord),
 		output_palette_array
-	).rgb;
+	);
 }
 
 /*
