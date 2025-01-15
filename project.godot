@@ -11,6 +11,18 @@ config_version=5
 [application]
 
 config/name="Eye Dropper"
-run/main_scene="res://test/Test.tscn"
+run/main_scene="res://test/manual/test_canvas_items/test_canvas_items.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://assets/icon.png"
+
+[display]
+
+window/size/viewport_width=256
+window/size/viewport_height=144
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="viewport"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

@@ -1,0 +1,73 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgwv1mfxwt8rn"]
+
+[ext_resource type="Material" uid="uid://dxmo62f8dba8e" path="res://test/manual/test_canvas_items/shader_material.tres" id="1_h0t45"]
+[ext_resource type="Texture2D" uid="uid://c151c68kdwt6m" path="res://test/resources/dog_sprite.png" id="1_i04qd"]
+[ext_resource type="Texture2D" uid="uid://buv2lag6lwfci" path="res://test/resources/dog_sprite_palette1.png" id="3_4c5dh"]
+
+[node name="TestCanvasItems" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Container" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Row" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="Column1" type="VBoxContainer" parent="Container/Row"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Container/Row/Column1"]
+custom_minimum_size = Vector2(77, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Original Sprite"
+horizontal_alignment = 1
+
+[node name="CanvasItem" type="TextureRect" parent="Container/Row/Column1"]
+layout_mode = 2
+texture = ExtResource("1_i04qd")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Column2" type="VBoxContainer" parent="Container/Row"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Container/Row/Column2"]
+custom_minimum_size = Vector2(77, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Shader Applied"
+horizontal_alignment = 1
+
+[node name="CanvasItem" type="TextureRect" parent="Container/Row/Column2"]
+material = ExtResource("1_h0t45")
+layout_mode = 2
+texture = ExtResource("1_i04qd")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Column3" type="VBoxContainer" parent="Container/Row"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Container/Row/Column3"]
+custom_minimum_size = Vector2(77, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Expected Result"
+horizontal_alignment = 1
+
+[node name="CanvasItem" type="TextureRect" parent="Container/Row/Column3"]
+layout_mode = 2
+texture = ExtResource("3_4c5dh")
+expand_mode = 4
+stretch_mode = 5

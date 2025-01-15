@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diviexnvcjvme"
-path="res://.godot/imported/purple_palette.png-a49a37128813adca1ccc33324a3d32ef.ctex"
+uid="uid://c151c68kdwt6m"
+path="res://.godot/imported/dog_sprite.png-998cd4ec3e960a1f69284b8a411fb7d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://test/purple_palette.png"
-dest_files=["res://.godot/imported/purple_palette.png-a49a37128813adca1ccc33324a3d32ef.ctex"]
+source_file="res://test/resources/dog_sprite.png"
+dest_files=["res://.godot/imported/dog_sprite.png-998cd4ec3e960a1f69284b8a411fb7d2.ctex"]
 
 [params]
 
