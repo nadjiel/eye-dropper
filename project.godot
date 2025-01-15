@@ -14,7 +14,3 @@ config/name="Eye Dropper"
 run/main_scene="res://test/Test.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://assets/icon.png"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/eye_dropper/plugin.cfg")
