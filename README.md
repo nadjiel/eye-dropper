@@ -1,7 +1,7 @@
 
 <h1 align="center">🎨 Eye Dropper</h1>
 
-![Banner](assets/pictures/banner.png)
+![Banner](https://raw.githubusercontent.com/nadjiel/eye-dropper/refs/heads/main/assets/pictures/banner.png)
 
 <p align="center">
   <a href="https://godotengine.org/download/" target="_blank">
@@ -32,7 +32,7 @@ The main purpose of this project is allowing easy color swapping for `CanvasItem
 That's achieved with the `eye_dropper.gdshader` script, which exposes handy properties that can be tweaked programatically, or manually in the Godot editor, in order to achieve different palettes dynamically.
 
 <p align="center">
-  <img width="80%" alt="Color swapping illustration" src="assets/pictures/picture1.png" ><br>
+  <img width="80%" alt="Color swapping illustration" src="https://raw.githubusercontent.com/nadjiel/eye-dropper/refs/heads/main/assets/pictures/picture1.png" ><br>
   <em>Illustration of the color swapping process</em>
 </p>
 
@@ -41,7 +41,7 @@ For that palette swapping to happen, two important pair of properties are availa
 Both of these pair of properties serve the same functionality: allowing you to define what colors should be replaced by what colors in the color swapping process.
 
 <p align="center">
-  <img alt="Shader parameters screenshot" src="assets/pictures/shader_parameters.png" ><br>
+  <img alt="Shader parameters screenshot" src="https://raw.githubusercontent.com/nadjiel/eye-dropper/refs/heads/main/assets/pictures/shader_parameters.png" ><br>
   <em>Screenshot of the shader parameters</em>
 </p>
 
@@ -61,7 +61,7 @@ This is implemented that way because in `GDShaders` `Arrays` must have a constan
 It's important to note that both the `Texture` and `Array` approaches also support swapping transparent colors, not only opaque ones, so keep that in mind when designing your palettes.
 
 <p align="center">
-  <img width="80%" alt="Transparent color swapping support illustration" src="assets/pictures/picture3.png" ><br>
+  <img width="80%" alt="Transparent color swapping support illustration" src="https://raw.githubusercontent.com/nadjiel/eye-dropper/refs/heads/main/assets/pictures/picture3.png" ><br>
   <em>Illustration of the transparent color swapping support</em>
 </p>
 
