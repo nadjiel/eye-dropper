@@ -21,7 +21,7 @@
 Eye Dropper is a shader for the Godot engine (`GDShader`) that helps with quick color palette swapping easily customizable through shader parameters.
 
 This shader is a `canvas_item` type of shader that was meant, at least initially, to be used with `CanvasItems` nodes in Godot.
-[Contributions](https://github.com/nadjiel/eye-dropper/tree/main#contributing) are welcome to make a version that works with `3D` nodes.
+[Contributions](https://github.com/nadjiel/eye-dropper/tree/main#handshake-contributing) are welcome to make a version that works with `3D` nodes.
 
 With this shader, you can configure your palettes through `Textures` or through `PackedColorArrays`, or even use both options, if it's more convenient to you.
 
