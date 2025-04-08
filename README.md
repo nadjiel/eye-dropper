@@ -53,9 +53,9 @@ That's useful when you wanna make dynamic color swapping that changes frequently
 There's a catch with the `Array` parameters, though.
 To be able to use the palette `Arrays` with various colors, make sure to tweak the `max_palette_array_size` constant in the `eye_dropper.gdshader` file so that it attends your project's needs.
 
-By default, that constant is set to `4`, which means that only `4` colors are allowed at maximum using the `Arrays`, but, as mentioned, that's easily tweakable.
+By default, that constant is set to `8`, which means that only `8` colors are allowed at maximum using the `Arrays`, but, as mentioned, that's easily tweakable.
 
-This is implemented that way because in `GDShaders` `Arrays` must have a constant initial size predefined, which I decided to let as `4`, initially. 
+This is implemented that way because, in `GDShaders`, `Arrays` must have a constant initial size predefined, which I decided to let as `8`, initially. 
 
 ### :eyeglasses: Transparency support
 It's important to note that both the `Texture` and `Array` approaches also support swapping transparent colors, not only opaque ones, so keep that in mind when designing your palettes.
