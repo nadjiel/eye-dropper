@@ -71,6 +71,27 @@ int compare_floats(float a, float b) {
 }
 
 /**
+ * Compares two colors ([param a] and [param b]), and tells if they are
+ * approximately equal, based on an epsilon of [code]0.001[/code].
+ * If the colors match, [code]true[/code] is returned, else, this function
+ * returns [code]false[/code].
+ * This code was adapted from
+ * [url=https://forum.godotengine.org/t/shader-wont-work-during-runtime/53299/4]Calinou's post on the Godot forum[/url].
+ */
+bool color_is_approx_equal(vec4 a, vec4 b) {
+	if (
+	    a.r >= b.r - 0.001 && a.r <= b.r + 0.001 &&
+	    a.g >= b.g - 0.001 && a.g <= b.g + 0.001 &&
+	    a.b >= b.b - 0.001 && a.b <= b.b + 0.001 && 
+	    a.a >= b.a - 0.001 && a.a <= b.a + 0.001
+	) {
+		return true;
+	}
+	
+	return false;
+}
+
+/**
  * The [code]color_is_transparent[/code] function is a utility function that
  * returns a [code]bool[/code] indicating if the received [param color] is
  * fully transparent.
@@ -177,7 +198,7 @@ int find_color_in_palette_array(vec4 color, vec4[max_palette_array_size] palette
 	for(int i = 0; i < safe_palette_array_size; i++) {
 		vec4 palette_color = palette[i];
 		
-		if(color == palette_color) {
+		if(color_is_approx_equal(color, palette_color)) {
 			return i;
 		}
 		if(color_is_transparent(color) && color_is_transparent(palette_color)) {
