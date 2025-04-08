@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://e18gy65uooye"]
+
+[ext_resource type="Shader" path="res://addons/eye_dropper/eye_dropper.gdshader" id="1_cbin0"]
+
+[resource]
+shader = ExtResource("1_cbin0")
+shader_parameter/palette_array_size = 8
+shader_parameter/input_palette_array = PackedColorArray(0, 0, 0, 1, 0.188235, 0.176471, 0.2, 1, 0.603922, 0.541176, 0.541176, 1, 0.705882, 0.658824, 0.631373, 1, 0.8, 0.784314, 0.713726, 1, 0.901961, 0.898039, 0.803922, 1, 1, 1, 1, 1, 0, 0, 0, 0)
+shader_parameter/output_palette_array = PackedColorArray(0.0313726, 0.109804, 0.0823529, 1, 0.737255, 0.423529, 0.145098, 1, 0.203922, 0.305882, 0.254902, 1, 0.227451, 0.352941, 0.25098, 1, 0.345098, 0.505882, 0.341176, 1, 0.639216, 0.694118, 0.541176, 1, 0.854902, 0.843137, 0.803922, 1, 1, 0.764706, 0.721569, 1)

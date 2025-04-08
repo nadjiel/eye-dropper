@@ -4,7 +4,7 @@ shader_type canvas_item;
  * The [code]max_palette_array_size[/code] constant specifies how much colors the [code]input_palette_array[/code] and [code]output_palette_array[/code] properties should store at maximum.
  * Since the size of arrays in shaders must be constant, this can't be exported to be edited in the editor, so it is expected that you hardcode this manually to attend your needs.
  */
-const uint max_palette_array_size = uint(4);
+const uint max_palette_array_size = uint(8);
 
 /**
  * The [code]palette_array_size[/code] property stores how much colors there actually are in the palette arrays.
@@ -68,6 +68,27 @@ int compare_floats(float a, float b) {
 	} else {
 		return -1;
 	}
+}
+
+/**
+ * Compares two colors ([param a] and [param b]), and tells if they are
+ * approximately equal, based on an epsilon of [code]0.001[/code].
+ * If the colors match, [code]true[/code] is returned, else, this function
+ * returns [code]false[/code].
+ * This code was adapted from
+ * [url=https://forum.godotengine.org/t/shader-wont-work-during-runtime/53299/4]Calinou's post on the Godot forum[/url].
+ */
+bool color_is_approx_equal(vec4 a, vec4 b) {
+	if (
+	    a.r >= b.r - 0.001 && a.r <= b.r + 0.001 &&
+	    a.g >= b.g - 0.001 && a.g <= b.g + 0.001 &&
+	    a.b >= b.b - 0.001 && a.b <= b.b + 0.001 && 
+	    a.a >= b.a - 0.001 && a.a <= b.a + 0.001
+	) {
+		return true;
+	}
+	
+	return false;
 }
 
 /**
@@ -177,7 +198,7 @@ int find_color_in_palette_array(vec4 color, vec4[max_palette_array_size] palette
 	for(int i = 0; i < safe_palette_array_size; i++) {
 		vec4 palette_color = palette[i];
 		
-		if(color == palette_color) {
+		if(color_is_approx_equal(color, palette_color)) {
 			return i;
 		}
 		if(color_is_transparent(color) && color_is_transparent(palette_color)) {
