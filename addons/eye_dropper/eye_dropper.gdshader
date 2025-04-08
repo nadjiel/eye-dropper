@@ -4,7 +4,7 @@ shader_type canvas_item;
  * The [code]max_palette_array_size[/code] constant specifies how much colors the [code]input_palette_array[/code] and [code]output_palette_array[/code] properties should store at maximum.
  * Since the size of arrays in shaders must be constant, this can't be exported to be edited in the editor, so it is expected that you hardcode this manually to attend your needs.
  */
-const uint max_palette_array_size = uint(4);
+const uint max_palette_array_size = uint(8);
 
 /**
  * The [code]palette_array_size[/code] property stores how much colors there actually are in the palette arrays.
